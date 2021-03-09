@@ -16,11 +16,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ScriptMgr.h"
-#include "Player.h"
-#include "Pet.h"
-#include "SpellInfo.h"
 #include "Config.h"
+#include "Pet.h"
+#include "Player.h"
+#include "ScriptMgr.h"
+#include "SpellInfo.h"
+#include "Unit.h"
 
 class DuelResetScript : public PlayerScript
 {
@@ -94,13 +95,18 @@ class DuelResetScript : public PlayerScript
                 {
                     if (!winner->IsInCombat())
                     {
-                        winner->RestoreHealthAfterDuel();
+                        return false;
                     }
+                    
+                    winner->RestoreHealthAfterDuel();
+                    
 
                     if (!loser->IsInCombat())
                     {    
-                        loser->RestoreHealthAfterDuel();
+                        return false;
                     }
+
+                    loser->RestoreHealthAfterDuel();
 
                     // check if player1 class uses mana
                     if (winner->getPowerType() == POWER_MANA || winner->getClass() == CLASS_DRUID)
