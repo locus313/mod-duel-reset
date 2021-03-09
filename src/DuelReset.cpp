@@ -31,7 +31,7 @@ class DuelResetScript : public PlayerScript
         void OnDuelStart(Player* player1, Player* player2) override
         {
             // Cooldowns reset
-            if (sConfigMgr->GetBoolDefault("DuelResetCooldowns", true)||!player->IsInCombat())
+            if (sConfigMgr->GetBoolDefault("DuelResetCooldowns", true))
             {
                 // Temporary basic cooldown reset
                 player1->RemoveArenaSpellCooldowns();
@@ -47,7 +47,7 @@ class DuelResetScript : public PlayerScript
             }
 
             // Health and mana reset
-            if (sConfigMgr->GetBoolDefault("DuelResetHealthMana", true)||!player->IsInCombat())
+            if (sConfigMgr->GetBoolDefault("DuelResetHealthMana", true))
             {
                 player1->SaveHealthBeforeDuel();
                 player1->SetHealth(player1->GetMaxHealth());
@@ -78,7 +78,7 @@ class DuelResetScript : public PlayerScript
             if (type == DUEL_WON)
             {
                 // Cooldown restore
-                if (sConfigMgr->GetBoolDefault("DuelResetCooldowns", true)||!player->IsInCombat())
+                if (sConfigMgr->GetBoolDefault("DuelResetCooldowns", true))
                 {
                     /* TODO: convert this
                     ResetSpellCooldowns(winner, false);
@@ -90,10 +90,17 @@ class DuelResetScript : public PlayerScript
                 }
 
                 // Health and mana restore
-                if (sConfigMgr->GetBoolDefault("DuelResetHealthMana", true)||!player->IsInCombat())
+                if (sConfigMgr->GetBoolDefault("DuelResetHealthMana", true))
                 {
-                    winner->RestoreHealthAfterDuel();
-                    loser->RestoreHealthAfterDuel();
+                    if (!winner->IsInCombat())
+                    {
+                        winner->RestoreHealthAfterDuel();
+                    }
+
+                    if (!loser->IsInCombat())
+                    {    
+                        loser->RestoreHealthAfterDuel();
+                    }
 
                     // check if player1 class uses mana
                     if (winner->getPowerType() == POWER_MANA || winner->getClass() == CLASS_DRUID)
